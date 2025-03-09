@@ -1,44 +1,49 @@
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_SERVER_URL;
+
 class AuthService {
-  constructor() {
-    this.api = axios.create({
-      baseURL: process.env.REACT_APP_SERVER_URL || "http://localhost:5005",
-    });
+  // Login user
+  async login(email, password) {
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
+        email,
+        password,
+      });
 
-    // Automatically set JWT token on the request headers for every request
-    this.api.interceptors.request.use((config) => {
-      // Retrieve the JWT token from the local storage
-      const storedToken = localStorage.getItem("authToken");
-
-      if (storedToken) {
-        config.headers = { Authorization: `Bearer ${storedToken}` };
-      }
-
-      return config;
-    });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  login = (requestBody) => {
-    return this.api.post("/auth/login", requestBody);
-    // same as
-    // return axios.post("http://localhost:5005/auth/login");
-  };
+  // Register user
+  async register(username, email, password, name) {
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/register`, {
+        username,
+        name: name || username, // Use name or fallback to username
+        email,
+        password,
+      });
 
-  signup = (requestBody) => {
-    return this.api.post("/auth/signup", requestBody);
-    // same as
-    // return axios.post("http://localhost:5005/auth/singup");
-  };
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
-  verify = () => {
-    return this.api.get("/auth/verify");
-    // same as
-    // return axios.post("http://localhost:5005/auth/verify");
-  };
+  // Get current user from localStorage
+  getCurrentUser() {
+    const userStr = localStorage.getItem("user");
+    if (userStr) return JSON.parse(userStr);
+    return null;
+  }
+
+  // Check if user is logged in
+  isLoggedIn() {
+    return !!localStorage.getItem("token");
+  }
 }
 
-// Create one instance (object) of the service
-const authService = new AuthService();
-
-export default authService;
+export default new AuthService();

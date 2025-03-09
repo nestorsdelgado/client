@@ -1,3 +1,4 @@
+import api from '../../services/axios';
 import React, { useState } from 'react';
 import {
     Dialog,
@@ -13,7 +14,9 @@ import {
     Paper
 } from '@mui/material';
 import { ContentCopy } from '@mui/icons-material';
-import leagueService from '../../services/leagues.service';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_SERVER_URL;
 
 const AddLeague = ({ open, onClose, onLeagueAdded }) => {
     const [leagueName, setLeagueName] = useState('');
@@ -38,10 +41,13 @@ const AddLeague = ({ open, onClose, onLeagueAdded }) => {
         setError('');
 
         try {
-            const response = await leagueService.createLeague(leagueName);
+
+            const response = await api.post('/api/create', {
+                Nombre: leagueName
+            });
 
             // Save the created league data to show code
-            setCreatedLeague(response.league);
+            setCreatedLeague(response.data.league);
 
         } catch (err) {
             console.error('Error creating league:', err);

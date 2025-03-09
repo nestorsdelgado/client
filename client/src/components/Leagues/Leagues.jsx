@@ -1,23 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Box, Chip, Tooltip, IconButton } from '@mui/material';
-import { ContentCopy, SportsSoccer, Logout } from '@mui/icons-material';
-import LeaveLeague from '../LeaveLeague/LeagueLeague';
+import { ContentCopy, SportsSoccer } from '@mui/icons-material';
 
-const Leagues = ({ leagues, onLeagueChange }) => {
+const Leagues = ({ leagues }) => {
     // Simple validation to ensure leagues is an array
     const leaguesArray = Array.isArray(leagues) ? leagues : [];
 
-    const [copiedLeague, setCopiedLeague] = useState(null);
-    const [leaveLeagueDialog, setLeaveLeagueDialog] = useState({
-        open: false,
-        leagueId: null,
-        leagueName: ''
-    });
+    const [copiedLeague, setCopiedLeague] = React.useState(null);
 
     const handleCopyCode = (leagueId, code) => {
         navigator.clipboard.writeText(code)
@@ -45,31 +39,6 @@ const Leagues = ({ leagues, onLeagueChange }) => {
     };
 
     const currentUserId = getCurrentUserId();
-
-    // Handle opening leave league dialog
-    const handleOpenLeaveDialog = (leagueId, leagueName) => {
-        setLeaveLeagueDialog({
-            open: true,
-            leagueId,
-            leagueName
-        });
-    };
-
-    // Handle closing leave league dialog
-    const handleCloseLeaveDialog = () => {
-        setLeaveLeagueDialog({
-            open: false,
-            leagueId: null,
-            leagueName: ''
-        });
-    };
-
-    // Handle after successfully leaving a league
-    const handleLeagueLeft = () => {
-        if (onLeagueChange) {
-            onLeagueChange();
-        }
-    };
 
     return (
         <div className='ligas-box' style={{
@@ -159,38 +128,14 @@ const Leagues = ({ leagues, onLeagueChange }) => {
 
                             <CardActions style={{ justifyContent: "space-between" }}>
                                 <Button size="small">Seleccionar liga</Button>
-                                {isCreator ? (
-                                    <Button
-                                        size="small"
-                                        color="error"
-                                        /* onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)} */
-                                    >
-                                        Anfitrión de la liga
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        size="small"
-                                        color="warning"
-                                        startIcon={<Logout />}
-                                        onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)}
-                                    >
-                                        Salir de liga
-                                    </Button>
+                                {isCreator && (
+                                    <Button size="small" color="error">Borrar liga</Button>
                                 )}
                             </CardActions>
                         </Card>
                     );
                 })
             )}
-
-            {/* Leave League Dialog */}
-            <LeaveLeague
-                open={leaveLeagueDialog.open}
-                onClose={handleCloseLeaveDialog}
-                leagueId={leaveLeagueDialog.leagueId}
-                leagueName={leaveLeagueDialog.leagueName}
-                onLeagueLeft={handleLeagueLeft}
-            />
         </div>
     );
 };

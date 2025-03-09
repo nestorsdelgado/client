@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MainContent.css';
 import Leagues from '../Leagues/Leagues';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import AddLeague from '../AddLeague/AddLeague';
 import JoinLeague from '../JoinLeague/JoinLeague';
@@ -8,8 +9,8 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Box, Typography, ThemeProvider, createTheme } from '@mui/material';
 import { Add, GroupAdd } from '@mui/icons-material';
-import { AuthContext } from '../../context/auth.context';
-import leagueService from '../../services/leagues.service';
+
+const API_URL = process.env.REACT_APP_SERVER_URL;
 
 // Custom theme for the pagination (white numbers)
 const paginationTheme = createTheme({
@@ -38,45 +39,76 @@ const paginationTheme = createTheme({
 });
 
 const MainContent = ({ isSidebarOpen, openAuthModal }) => {
-  const { isLoggedIn, isLoading } = useContext(AuthContext);
+
   const [allLeagues, setAllLeagues] = useState([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [leaguesPerPage] = useState(4);
 
-  // This useEffect will run when the component mounts, authentication changes, or refreshKey changes
+  // Check authentication status on component mount
   useEffect(() => {
-    if (isLoggedIn && !isLoading) {
-      console.log("Fetching leagues with refreshKey:", refreshKey);
-      fetchLeagues();
-    } else if (!isLoading) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
       setLoading(false);
     }
-  }, [refreshKey, isLoggedIn, isLoading]);
+  }, []);
+
+  // This useEffect will run when the component mounts and whenever refreshKey changes
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log("Fetching leagues with refreshKey:", refreshKey);
+      fetchLeagues();
+    }
+  }, [refreshKey, isLoggedIn]);
 
   const fetchLeagues = async () => {
     setLoading(true);
     try {
       console.log("Making API request to fetch leagues");
-      const data = await leagueService.getAllLeagues();
+
+      // Get the token from localStorage
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        console.error("No authentication token found");
+        setAllLeagues([]);
+        setLoading(false);
+        return;
+      }
+
+      // Set up the request headers with the token
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      };
+
+      console.log("Making request with token:", token.substring(0, 10) + "...");
+
+      const response = await axios.get(`${API_URL}/api/my-leagues`, config);
+      console.log("API response:", response.data);
 
       // Handle different response structures
       let leaguesData = [];
 
-      if (Array.isArray(data)) {
-        leaguesData = data;
-      } else if (data && Array.isArray(data.Ligas)) {
-        leaguesData = data.Ligas;
-      } else if (data && typeof data === 'object') {
+      if (Array.isArray(response.data)) {
+        leaguesData = response.data;
+      } else if (response.data && Array.isArray(response.data.Ligas)) {
+        leaguesData = response.data.Ligas;
+      } else if (response.data && typeof response.data === 'object') {
         // If data is an object, try to find an array property
-        for (const key in data) {
-          if (Array.isArray(data[key])) {
-            leaguesData = data[key];
+        for (const key in response.data) {
+          if (Array.isArray(response.data[key])) {
+            leaguesData = response.data[key];
             break;
           }
         }
@@ -87,6 +119,15 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
     } catch (error) {
       console.error("Error fetching leagues:", error);
       console.error("Error response:", error.response?.data);
+
+      // If unauthorized, we may need to clear token and set logged out
+      if (error.response?.status === 401) {
+        console.log("Unauthorized: token may be invalid");
+        // Optionally clear token if it's invalid
+        // localStorage.removeItem('token');
+        // setIsLoggedIn(false);
+      }
+
       setAllLeagues([]);
     } finally {
       setLoading(false);
@@ -125,7 +166,6 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
     setCurrentPage(value);
   };
 
-  // Handle opening login modal
   const handleOpenLogin = () => {
     if (openAuthModal) {
       openAuthModal();
@@ -134,12 +174,12 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
 
   return (
     <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <div className="league-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="league-header">
         <Typography variant="h4" component="h1" sx={{ color: 'white' }}>
           My Leagues
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
           <Button
             variant="contained"
             color="primary"
@@ -194,7 +234,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
             Log In
           </Button>
         </Box>
-      ) : isLoading || loading ? (
+      ) : loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Typography variant="body1" sx={{ color: 'white' }}>Loading leagues...</Typography>
         </Box>
@@ -236,10 +276,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
             </Box>
           ) : (
             <>
-              <Leagues
-                leagues={currentLeagues}
-                onLeagueChange={() => setRefreshKey(prevKey => prevKey + 1)}
-              />
+              <Leagues leagues={currentLeagues} />
 
               {/* Only show pagination if we have leagues */}
               {safeAllLeagues.length > leaguesPerPage && (

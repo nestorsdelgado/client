@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import './Navbar.css';
 import { AccountCircle } from '@mui/icons-material';
@@ -8,11 +8,28 @@ import {
   IconButton,
   Typography
 } from '@mui/material';
-import { AuthContext } from '../../context/auth.context';
 
-const Navbar = ({ isSidebarOpen, toggleSidebar, openAuthModal }) => {
-  const { isLoggedIn, user, logOutUser } = useContext(AuthContext);
-  const [anchorEl, setAnchorEl] = useState(null);
+const Navbar = ({ isSidebarOpen, toggleSidebar, isAuthModalOpen, setIsAuthModalOpen }) => {
+
+  const [anchorEl, setAnchorEl] = useState(null);  // Controls dropdown state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Mock login state for demonstration
+
+  // Get logged in status from localStorage
+  React.useEffect(() => {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+
+    if (token && user) {
+      try {
+        const userData = JSON.parse(user);
+        setIsLoggedIn(true);
+      } catch (e) {
+        // Invalid user data in localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
+  }, []);
 
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -23,19 +40,16 @@ const Navbar = ({ isSidebarOpen, toggleSidebar, openAuthModal }) => {
   };
 
   const handleLogout = () => {
-    logOutUser();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
     handleCloseMenu();
   };
 
   const handleOpenAuth = () => {
     handleCloseMenu();
-    if (openAuthModal) {
-      openAuthModal();
-    }
+    setIsAuthModalOpen(true);
   };
-
-  // Get username from the user object
-  const username = user ? (user.username || 'User') : 'User';
 
   return (
     <nav className="navbar">
@@ -62,7 +76,7 @@ const Navbar = ({ isSidebarOpen, toggleSidebar, openAuthModal }) => {
         <AccountCircle sx={{ fontSize: 40 }} />
       </IconButton>
 
-      {/* Dropdown Menu */}
+      {/* Dropdown Menu - FIXED VERSION */}
       <Dropdown
         id="user-menu"
         anchorEl={anchorEl}
@@ -70,10 +84,10 @@ const Navbar = ({ isSidebarOpen, toggleSidebar, openAuthModal }) => {
         onClose={handleCloseMenu}
       >
         {isLoggedIn ? (
-          [
+          [  // Use an array instead of Fragment
             <MenuItem key="user-info" disabled>
               <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                Hello, {username}
+                Hello, User
               </Typography>
             </MenuItem>,
             <MenuItem key="logout" onClick={handleLogout}>Log Out</MenuItem>

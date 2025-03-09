@@ -1,48 +1,55 @@
-import axios from 'axios';
+import api from "./axios";
 
 class LeagueService {
-    constructor() {
-        this.api = axios.create({
-            baseURL: process.env.REACT_APP_SERVER_URL || "http://localhost:5005"
-        });
-
-        // Automatically set JWT token in the headers for every request
-        /* this.api.interceptors.request.use((config) => {
-            // Retrieve the JWT token from the local storage
-            const storedToken = localStorage.getItem("authToken");
-
-            if (storedToken) {
-                config.headers = { Authorization: `Bearer ${storedToken}` };
-            }
-
-            return config;
-        }); */
-    }
-
-    // POST /api/my-leagues
-    createLeague = async (leagueData) => {
+    // Get all leagues for the current user
+    async getAllLeagues() {
         try {
-          const response = await this.api.post('/api/my-leagues', leagueData);
-          return response.data;
-        } catch (error) {
-          console.error("Error creating league:", error);
-          throw error;
-        }
-      };
-
-    // GET /api/my-leagues
-    getAllLeagues = async () => {
-        try {
-            const response = await this.api.get('/api/my-leagues');
+            const response = await api.get("/api/my-leagues");
             return response.data;
         } catch (error) {
-            console.error("Error fetching leagues:", error);
             throw error;
         }
-    };
+    }
 
+    // Create a new league
+    async createLeague(leagueName) {
+        try {
+            const response = await api.post("/api/create", { Nombre: leagueName });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Join a league with a code
+    async joinLeague(code) {
+        try {
+            const response = await api.post("/api/join", { code });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Delete a league
+    async deleteOneLeague(leagueId) {
+        try {
+            const response = await api.delete(`/api/leagues/${leagueId}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    // Leave a league (without deleting it)
+    async leaveLeague(leagueId) {
+        try {
+            const response = await api.post(`/api/leave/${leagueId}`);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
-const leagueService = new LeagueService();
-
-export default leagueService;
+export default new LeagueService();
