@@ -134,10 +134,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
 
   return (
     <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <div className="league-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <Typography variant="h4" component="h1" sx={{ color: 'white' }}>
-          My Leagues
-        </Typography>
+      <div className="league-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', marginTop:'30px' }}>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
