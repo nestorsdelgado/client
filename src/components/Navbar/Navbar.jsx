@@ -38,7 +38,7 @@ const Navbar = ({ isSidebarOpen, toggleSidebar, openAuthModal }) => {
   const username = user ? (user.username || 'User') : 'User';
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" style={{height: '10vh'}}>
       <button
         className="navbar-toggle"
         onClick={toggleSidebar}

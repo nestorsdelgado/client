@@ -133,8 +133,8 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
   };
 
   return (
-    <div style={{height:'91vh'}} className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      <div className="league-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', marginTop:'30px' }}>
+    <div style={{height:'96vh'}} className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+      <div className="league-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button

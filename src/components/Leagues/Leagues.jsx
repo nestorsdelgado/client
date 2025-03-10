@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Box, Chip, Tooltip, IconButton } from '@mui/material';
-import { ContentCopy, SportsSoccer, Logout } from '@mui/icons-material';
+import { Box, Chip, Tooltip, IconButton, Snackbar, Alert } from '@mui/material';
+import { ContentCopy, SportsSoccer, Logout, CheckCircle } from '@mui/icons-material';
 import LeaveLeague from '../LeaveLeague/LeaveLeague';
+import { LeagueContext } from '../../context/league.context';
 
 const Leagues = ({ leagues, onLeagueChange }) => {
     // Simple validation to ensure leagues is an array
     const leaguesArray = Array.isArray(leagues) ? leagues : [];
+
+    // Access the league context
+    const { selectedLeague, selectLeague } = useContext(LeagueContext);
 
     const [copiedLeague, setCopiedLeague] = useState(null);
     const [leaveLeagueDialog, setLeaveLeagueDialog] = useState({
         open: false,
         leagueId: null,
         leagueName: ''
+    });
+
+    // State for showing notification when a league is selected
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
     });
 
     const handleCopyCode = (leagueId, code) => {
@@ -69,6 +80,32 @@ const Leagues = ({ leagues, onLeagueChange }) => {
         if (onLeagueChange) {
             onLeagueChange();
         }
+
+        // If the user left the currently selected league, clear the selection
+        if (selectedLeague && leaveLeagueDialog.leagueId === selectedLeague._id) {
+            selectLeague(null);
+        }
+    };
+
+    // Handle selecting a league
+    const handleSelectLeague = (league) => {
+        selectLeague(league);
+        setSnackbar({
+            open: true,
+            message: `Liga "${league.Nombre}" seleccionada`,
+            severity: 'success'
+        });
+    };
+
+    // Handle closing the snackbar
+    const handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackbar({
+            ...snackbar,
+            open: false
+        });
     };
 
     return (
@@ -86,9 +123,31 @@ const Leagues = ({ leagues, onLeagueChange }) => {
             ) : (
                 leaguesArray.map((league, index) => {
                     const isCreator = league.createdBy === currentUserId;
+                    const isSelected = selectedLeague && selectedLeague._id === league._id;
 
                     return (
-                        <Card sx={{ maxWidth: 700, width: '100%' }} key={league._id || league.id || index}>
+                        <Card
+                            sx={{
+                                maxWidth: 700,
+                                width: '100%',
+                                border: isSelected ? '2px solid #1976d2' : 'none',
+                                position: 'relative'
+                            }}
+                            key={league._id || league.id || index}
+                        >
+                            {isSelected && (
+                                <Chip
+                                    icon={<CheckCircle />}
+                                    label="Liga Activa"
+                                    color="primary"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: 10,
+                                        right: 10,
+                                        zIndex: 10
+                                    }}
+                                />
+                            )}
                             <CardContent>
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                                     <Typography gutterBottom variant="h5" component="div">
@@ -158,14 +217,22 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                             </CardContent>
 
                             <CardActions style={{ justifyContent: "space-between" }}>
-                                <Button size="small">Seleccionar liga</Button>
+                                <Button
+                                    size="small"
+                                    color={isSelected ? "success" : "primary"}
+                                    variant={isSelected ? "contained" : "outlined"}
+                                    onClick={() => handleSelectLeague(league)}
+                                    startIcon={isSelected ? <CheckCircle /> : null}
+                                >
+                                    {isSelected ? "Liga Seleccionada" : "Seleccionar Liga"}
+                                </Button>
                                 {isCreator ? (
                                     <Button
                                         size="small"
                                         color="error"
-                                        /* onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)} */
+                                        onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)}
                                     >
-                                        Anfitrión de la liga
+                                        Borrar liga
                                     </Button>
                                 ) : (
                                     <Button
@@ -191,6 +258,22 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                 leagueName={leaveLeagueDialog.leagueName}
                 onLeagueLeft={handleLeagueLeft}
             />
+
+            {/* Notification Snackbar */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseSnackbar}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </div>
     );
 };
