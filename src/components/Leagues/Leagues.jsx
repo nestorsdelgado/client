@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Box, Chip, Tooltip, IconButton } from '@mui/material';
 import { ContentCopy, SportsSoccer, Logout } from '@mui/icons-material';
-import LeaveLeague from '../LeaveLeague/LeagueLeague';
+import LeaveLeague from '../LeaveLeague/LeaveLeague';
 
 const Leagues = ({ leagues, onLeagueChange }) => {
     // Simple validation to ensure leagues is an array
@@ -77,7 +77,7 @@ const Leagues = ({ leagues, onLeagueChange }) => {
             flexDirection: 'column',
             alignItems: 'center',
             width: '100%',
-            minHeight: '80vh',
+            minHeight: '65vh',
             gap: '30px',
             padding: '20px'
         }}>

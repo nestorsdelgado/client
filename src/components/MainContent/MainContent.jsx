@@ -47,7 +47,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [leaguesPerPage] = useState(4);
+  const [leaguesPerPage] = useState(2);
 
   // This useEffect will run when the component mounts, authentication changes, or refreshKey changes
   useEffect(() => {
@@ -133,7 +133,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
   };
 
   return (
-    <div className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+    <div style={{height:'91vh'}} className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <div className="league-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', marginTop:'30px' }}>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
