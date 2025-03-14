@@ -142,8 +142,8 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                                     color="primary"
                                     sx={{
                                         position: 'absolute',
-                                        top: 10,
-                                        right: 10,
+                                        top: 16,
+                                        right: 120,
                                         zIndex: 10
                                     }}
                                 />
@@ -157,7 +157,7 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                                     {isCreator && (
                                         <Chip
                                             icon={<SportsSoccer />}
-                                            label="Owner"
+                                            label="Anfitrión"
                                             color="primary"
                                             size="small"
                                         />
@@ -194,26 +194,6 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                                     </Box>
                                 )}
 
-                                <div className='columna-liga' style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Número de participantes
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Cantidad de dinero actual
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Fecha de siguiente jornada
-                                    </Typography>
-                                </div>
-
-                                <div className='columna-liga' style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Puntos actuales
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Posición en liga
-                                    </Typography>
-                                </div>
                             </CardContent>
 
                             <CardActions style={{ justifyContent: "space-between" }}>
@@ -230,9 +210,9 @@ const Leagues = ({ leagues, onLeagueChange }) => {
                                     <Button
                                         size="small"
                                         color="error"
-                                        onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)}
+                                        /* onClick={() => handleOpenLeaveDialog(league._id, league.Nombre)} */
                                     >
-                                        Borrar liga
+                                        Anfitrión de la liga
                                     </Button>
                                 ) : (
                                     <Button

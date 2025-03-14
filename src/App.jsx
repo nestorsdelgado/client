@@ -5,8 +5,11 @@ import Navbar from './components/Navbar/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
 import MainContent from './components/MainContent/MainContent';
 import AuthModal from './components/AuthModal/AuthModal';
-import IsPrivate from './components/IsPrivate/IsPrivate';
-import IsAnon from './components/IsAnon/IsAnon';
+import MarketPage from './components/MarketPage/MarketPage';
+import TeamPage from './components/TeamPage/TeamPage';
+import InfoPage from './components/InfoPage/InfoPage';
+import ActivityPage from './components/ActivityPage/ActivityPage';
+import LeaderboardPage from './components/LeaderboardPage/LeaderboardPage';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,11 +52,21 @@ function App() {
             />
           }
         />
-        <Route path="/team" element={<div>Team Component</div>} />
-        <Route path="/leaderboard" element={<div>Leaderboard Component</div>} />
-        <Route path="/info" element={<div>Info Component</div>} />
-        <Route path="/market" element={<div>Market Component</div>} />
-        <Route path="/activity" element={<div>Activity Component</div>} />
+        <Route
+          path="/team"
+          element={
+            <TeamPage />
+          }
+        />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/info" element={<InfoPage />} />
+        <Route
+          path="/market"
+          element={
+            <MarketPage />
+          }
+        />
+        <Route path="/activity" element={<ActivityPage />} />
       </Routes>
     </div>
   );

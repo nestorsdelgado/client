@@ -47,7 +47,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [leaguesPerPage] = useState(2);
+  const [leaguesPerPage] = useState(3);
 
   // This useEffect will run when the component mounts, authentication changes, or refreshKey changes
   useEffect(() => {
@@ -133,7 +133,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
   };
 
   return (
-    <div style={{height:'96vh'}} className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+    <div style={{ height: '110vh' }} className={`main-content ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       <div className="league-header" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
 
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -143,7 +143,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
             startIcon={<GroupAdd />}
             onClick={() => isLoggedIn ? setIsJoinModalOpen(true) : handleOpenLogin()}
           >
-            Join League
+            Unirse a liga
           </Button>
 
           <Button
@@ -152,7 +152,7 @@ const MainContent = ({ isSidebarOpen, openAuthModal }) => {
             startIcon={<Add />}
             onClick={() => isLoggedIn ? setIsCreateModalOpen(true) : handleOpenLogin()}
           >
-            Create League
+            Crear liga
           </Button>
         </Box>
       </div>
