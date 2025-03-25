@@ -10,6 +10,7 @@ import TeamPage from './components/TeamPage/TeamPage';
 import InfoPage from './components/InfoPage/InfoPage';
 import ActivityPage from './components/ActivityPage/ActivityPage';
 import LeaderboardPage from './components/LeaderboardPage/LeaderboardPage';
+import GeminiChatButton from './components/GeminiChatButton/GeminiChatButton';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -68,6 +69,9 @@ function App() {
         />
         <Route path="/activity" element={<ActivityPage />} />
       </Routes>
+
+      {/* Añade el componente del chatbot aquí para que aparezca en todas las páginas */}
+      <GeminiChatButton />
     </div>
   );
 }
