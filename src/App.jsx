@@ -10,7 +10,7 @@ import TeamPage from './components/TeamPage/TeamPage';
 import InfoPage from './components/InfoPage/InfoPage';
 import ActivityPage from './components/ActivityPage/ActivityPage';
 import LeaderboardPage from './components/LeaderboardPage/LeaderboardPage';
-import GeminiChatButton from './components/GeminiChatButton/GeminiChatButton';
+import GeminiChatButton from './components/GeminiChatButton/GeminiChatButton'; 
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
